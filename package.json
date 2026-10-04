@@ -1,0 +1,21 @@
+{
+  "name": "sign-bridge",
+  "version": "1.0.0",
+  "description": "Sign Bridge - Assistive Voice-to-Text communication system for Hearing individuals to communicate with Deaf individuals",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "voice-recognition",
+    "speech-to-text",
+    "arduino",
+    "assistive-tech",
+    "deaf-communication"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "selfsigned": "^5.5.0"
+  }
+}

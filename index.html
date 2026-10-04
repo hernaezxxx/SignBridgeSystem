@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sign Bridge - Real-Time Voice-to-Text for Deaf Individuals</title>
+  <meta name="description"
+    content="Sign Bridge: Automatic real-time voice-to-text captions on big screen, designed specifically for deaf individuals holding the phone while communicating with hearing speakers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="theme-dark">
+
+  <!-- ================================================================ -->
+  <!-- LOADING SCREEN (5.5 seconds)                                       -->
+  <!-- ================================================================ -->
+  <div id="loadingScreen" class="loading-screen">
+    <!-- Background circuit grid -->
+    <div class="ls-circuit-bg" aria-hidden="true">
+      <div class="ls-circuit-line ls-cl-1"></div>
+      <div class="ls-circuit-line ls-cl-2"></div>
+      <div class="ls-circuit-line ls-cl-3"></div>
+      <div class="ls-circuit-line ls-cl-4"></div>
+      <div class="ls-circuit-dot ls-cd-1"></div>
+      <div class="ls-circuit-dot ls-cd-2"></div>
+      <div class="ls-circuit-dot ls-cd-3"></div>
+      <div class="ls-circuit-dot ls-cd-4"></div>
+      <div class="ls-circuit-dot ls-cd-5"></div>
+    </div>
+
+    <!-- Center Content -->
+    <div class="ls-center">
+      <!-- Animated pulse rings behind logo -->
+      <div class="ls-pulse-rings" aria-hidden="true">
+        <div class="ls-ring ls-ring-1"></div>
+        <div class="ls-ring ls-ring-2"></div>
+        <div class="ls-ring ls-ring-3"></div>
+      </div>
+
+      <!-- Logo -->
+      <div class="ls-logo-wrap">
+        <img src="images/logo.jpg" alt="Connectiva Technologies" class="ls-logo-img">
+      </div>
+
+      <!-- Text -->
+      <div class="ls-text-wrap">
+        <h1 class="ls-brand-name">Sign Bridge</h1>
+        <p class="ls-brand-sub">by Connectiva Technologies</p>
+        <p class="ls-brand-tag">Sign Language Recognition &bull; Communication System</p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="ls-progress-wrap" aria-label="Loading...">
+        <div class="ls-progress-bar">
+          <div class="ls-progress-fill" id="lsProgressFill"></div>
+          <div class="ls-progress-glow"></div>
+        </div>
+        <span class="ls-progress-label" id="lsProgressLabel">Initializing...</span>
+      </div>
+    </div>
+
+    <!-- Floating particles -->
+    <div class="ls-particles" aria-hidden="true">
+      <div class="ls-particle ls-p1"></div>
+      <div class="ls-particle ls-p2"></div>
+      <div class="ls-particle ls-p3"></div>
+      <div class="ls-particle ls-p4"></div>
+      <div class="ls-particle ls-p5"></div>
+      <div class="ls-particle ls-p6"></div>
+    </div>
+  </div>
+
+  <!-- Loading Screen Script (runs immediately, before anything else) -->
+  <script>
+    (function () {
+      const screen = document.getElementById('loadingScreen');
+      const fill = document.getElementById('lsProgressFill');
+      const label = document.getElementById('lsProgressLabel');
+      const TOTAL = 5500; // 5.5 seconds
+      const labels = ['Initializing...', 'Loading modules...', 'Starting voice engine...', 'Preparing captions...', 'Almost ready...', 'Welcome!'];
+      let start = null;
+
+      function step(ts) {
+        if (!start) start = ts;
+        const elapsed = Math.min(ts - start, TOTAL);
+        const pct = (elapsed / TOTAL) * 100;
+        fill.style.width = pct + '%';
+
+        // Update label based on progress
+        const idx = Math.min(Math.floor((pct / 100) * labels.length), labels.length - 1);
+        label.textContent = labels[idx];
+
+        if (elapsed < TOTAL) {
+          requestAnimationFrame(step);
+        } else {
+          // Fade out loading screen
+          screen.classList.add('ls-fade-out');
+          setTimeout(() => {
+            screen.style.display = 'none';
+            document.body.classList.add('ls-done');
+          }, 600);
+        }
+      }
+
+      requestAnimationFrame(step);
+    })();
+  </script>
+
+  <!-- ================================================================ -->
+  <!-- FRONT PAGE VIEW                                                    -->
+  <!-- ================================================================ -->
+  <div id="frontPageView" class="front-page-view">
+
+    <!-- Navigation -->
+    <nav class="fp-nav">
+      <div class="fp-nav-brand">
+        <img src="images/logo.jpg" alt="Connectiva Technologies Logo" class="fp-nav-logo-img">
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="fp-hero">
+      <div class="fp-hero-inner">
+        <div class="fp-logo-wrap">
+          <img src="images/logo.jpg" alt="Connectiva Technologies" class="fp-hero-logo-img">
+        </div>
+
+        <h1 class="fp-title">Sign Bridge</h1>
+        <p class="fp-company">by Connectiva Technologies</p>
+        <p class="fp-subtitle">Sign Language Recognition and Communication System</p>
+
+        <button id="frontPageStartBtn" class="fp-start-btn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+          Launch Live System Now
+        </button>
+
+        <p class="fp-hint">Real-time voice-to-text &bull; Designed for Deaf Individuals</p>
+      </div>
+    </main>
+
+    <!-- Thank You Section -->
+    <section class="fp-thankyou">
+      <div class="fp-thankyou-inner">
+        <h2 class="fp-ty-title">Thank You for Choosing Sign Bridge</h2>
+        <p class="fp-ty-msg">
+          We are sincerely grateful for your trust in our product. Sign Bridge was built with deep respect
+          and consideration for the deaf community, and it is our honor to be part of your daily communication.
+          Your support means the world to our team at Connectiva Technologies.
+        </p>
+        <p class="fp-ty-msg">
+          We kindly ask that you treat this tool with care &mdash; it was made for you, with heart.
+          Should you have any concerns or feedback, please do not hesitate to reach out. We are always here to help.
+        </p>
+      </div>
+    </section>
+
+    <!-- Prototype Section with Image -->
+    <section class="fp-prototype">
+      <div class="fp-section-inner fp-section-inner-wide">
+        <h2 class="fp-section-title">Our Hardware Prototype</h2>
+        <p class="fp-section-desc">
+          Sign Bridge pairs with our custom-built smart glove &mdash; a 5-sensor flex matrix
+          engineered to recognize sign language gestures with precision.
+        </p>
+        <div class="fp-prototype-img-wrap">
+          <img src="images/prototype.jpg" alt="SignBridge Gesture Recognition Prototype Smart Glove"
+            class="fp-prototype-img">
+          <div class="fp-prototype-badge">SignBridge Gesture Recognition Prototype</div>
+        </div>
+        <button id="frontSeePrototypeBtn" class="fp-outline-btn">View Technical Details</button>
+      </div>
+    </section>
+
+    <!-- The Creators & Inventors Section -->
+    <section class="fp-team">
+      <div class="fp-section-inner fp-section-inner-wide">
+        <h2 class="fp-section-title">The Creator &amp; Inventor</h2>
+        <p class="fp-section-desc">
+          Meet the passionate team behind Sign Bridge &mdash; students of Connectiva Technologies
+          who turned an idea into a life-changing assistive technology.
+        </p>
+        <div class="fp-team-grid">
+          <!-- Member 1 -->
+          <div class="fp-team-card">
+            <div class="fp-team-photo-wrap">
+              <img src="images/gian.jpg" alt="Gian Untalan" class="fp-team-photo"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="fp-team-photo-placeholder" style="display:none;">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+            </div>
+            <div class="fp-team-info">
+              <h3 class="fp-team-name">Gian Untalan</h3>
+              <span class="fp-team-role">Co-Founder &bull; Developer</span>
+            </div>
+          </div>
+
+          <!-- CEO -->
+          <div class="fp-team-card fp-team-card-ceo">
+            <div class="fp-team-photo-wrap">
+              <img src="images/jessy.jpg" alt="Jessy Hernaez" class="fp-team-photo"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="fp-team-photo-placeholder" style="display:none;">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+            </div>
+            <div class="fp-team-info">
+              <h3 class="fp-team-name">Jessy Hernaez</h3>
+              <span class="fp-team-role fp-team-role-ceo">Founder &bull; Chief Executive Officer (CEO)</span>
+            </div>
+          </div>
+
+          <!-- Creator / Inventor -->
+          <div class="fp-team-card">
+            <div class="fp-team-photo-wrap">
+              <img src="images/thomas.jpg" alt="Thomas Pasillan" class="fp-team-photo"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="fp-team-photo-placeholder" style="display:none;">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+            </div>
+            <div class="fp-team-info">
+              <h3 class="fp-team-name">Thomas Pasillan</h3>
+              <span class="fp-team-role">Inventor &bull; Hardware Engineer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Connectiva -->
+    <section class="fp-about">
+      <div class="fp-section-inner">
+        <h2 class="fp-section-title">About Connectiva Technologies</h2>
+        <p class="fp-section-desc">
+          Connectiva Technologies is a student-led business proposal dedicated to bridging the communication gap
+          between the deaf and hearing communities. Our team designed Sign Bridge as a capstone project
+          with a mission: to build assistive technology that is accessible, dignified, and life-changing.
+        </p>
+        <p class="fp-section-desc">
+          We believe every person deserves to be heard and understood &mdash; and with Sign Bridge, we take
+          that belief one step closer to reality.
+        </p>
+      </div>
+    </section>
+
+    <footer class="fp-footer">
+      <div class="fp-footer-brand">
+        <img src="images/logo.jpg" alt="Connectiva Technologies" class="fp-footer-logo">
+        <p>&copy; 2026 Connectiva Technologies &bull; Sign Bridge</p>
+      </div>
+      <button id="footerStartBtn" class="fp-footer-link">Launch the Live System &rarr;</button>
+    </footer>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- PROTOTYPE MODAL                                                    -->
+  <!-- ================================================================ -->
+  <div id="prototypeModal" class="modal-overlay" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          <h3>SignBridge Hardware Prototype</h3>
+        </div>
+        <button id="closePrototypeBtn" class="action-btn-close" title="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <section class="guide-section highlight-box">
+          <div class="guide-section-header">
+            <span class="step-num">🖐️</span>
+            <h4>5-Sensor Flex Glove Matrix</h4>
+          </div>
+          <p>The SignBridge smart glove uses five flex sensors (one per finger) connected to an Arduino microcontroller
+            to detect hand gestures in real time.</p>
+          <div class="deaf-guide-steps">
+            <div class="deaf-step-item">
+              <div class="step-circle">A0</div>
+              <div class="step-text"><strong>Thumb:</strong>
+                <p>Flex sensor on the thumb finger</p>
+              </div>
+            </div>
+            <div class="deaf-step-item">
+              <div class="step-circle">A1</div>
+              <div class="step-text"><strong>Index:</strong>
+                <p>Flex sensor on the index finger</p>
+              </div>
+            </div>
+            <div class="deaf-step-item">
+              <div class="step-circle">A2</div>
+              <div class="step-text"><strong>Middle:</strong>
+                <p>Flex sensor on the middle finger</p>
+              </div>
+            </div>
+            <div class="deaf-step-item">
+              <div class="step-circle">A3</div>
+              <div class="step-text"><strong>Ring:</strong>
+                <p>Flex sensor on the ring finger</p>
+              </div>
+            </div>
+            <div class="deaf-step-item">
+              <div class="step-circle">A4</div>
+              <div class="step-text"><strong>Pinky:</strong>
+                <p>Flex sensor on the pinky finger</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="guide-section">
+          <div class="guide-section-header">
+            <span class="step-num">⚙️</span>
+            <h4>Firmware &amp; Hardware</h4>
+          </div>
+          <p>The firmware is open source and available at <strong>arduino/glove_flex_sensor.ino</strong>. Compatible
+            with Arduino Uno, Nano, and ESP32. Baud Rate: 9600.</p>
+        </section>
+      </div>
+      <div class="modal-footer">
+        <button id="closePrototypeBottomBtn" class="btn btn-primary-gradient btn-lg">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- LIVE APPLICATION VIEW (Voice Recognition — DO NOT MODIFY)          -->
+  <!-- ================================================================ -->
+  <div id="liveAppView" style="display: none;">
+    <!-- Visual Sound Pulse Overlay for Peripheral Deaf Awareness -->
+    <div id="soundAlertOverlay" class="sound-alert-overlay" aria-hidden="true"></div>
+
+    <!-- Mobile HTTPS helper banner (shown only if on insecure HTTP on mobile) -->
+    <div id="insecureBanner" class="insecure-banner" style="display: none;">
+      <div class="insecure-banner-inner">
+        <span class="insecure-icon">🔒</span>
+        <div class="insecure-text">
+          <strong>Phone Microphone Requires HTTPS:</strong>
+          <span>Mobile Chrome &amp; Safari require a secure connection to use speech recognition.</span>
+        </div>
+        <a id="switchHttpsBtn" href="#" class="insecure-switch-btn">Switch to HTTPS (Port 8443)</a>
+      </div>
+    </div>
+
+    <!-- iOS Apple Dictation Filipino Limitation Alert Banner -->
+    <div id="iosFilipinoNotice" class="ios-notice-banner" style="display: none;">
+      <div class="ios-notice-inner">
+        <span class="ios-notice-icon">📱</span>
+        <div class="ios-notice-text">
+          <strong>iPhone Notice (Apple Limitation):</strong>
+          <span>Apple iOS natively does not support Filipino voice dictation (Apple Siri limitation). For your proposal presentation in Filipino, please use an <strong>Android phone</strong> (Chrome) or a <strong>Laptop</strong> (Chrome/Edge), where Google's Filipino engine works 100%. On iPhone, <strong>English (US)</strong> voice recognition is fully supported!</span>
+        </div>
+        <button id="closeIosNoticeBtn" class="ios-notice-close" title="Dismiss notice">&times;</button>
+      </div>
+    </div>
+
+    <!-- In-App Browser (Messenger / Instagram) Helper Banner -->
+    <div id="inAppBrowserBanner" class="insecure-banner" style="display: none; background: rgba(245, 158, 11, 0.16); border-color: rgba(245, 158, 11, 0.45);">
+      <div class="insecure-banner-inner">
+        <span class="insecure-icon">⚠️</span>
+        <div class="insecure-text" style="color: #fef08a;">
+          <strong>Opened in Messenger / In-App Browser:</strong>
+          <span>For 100% microphone recognition, tap <strong>&bull;&bull;&bull;</strong> at the top right and choose <strong>"Open in Chrome"</strong> or <strong>"Open in Safari"</strong>.</span>
+        </div>
+        <button id="closeInAppBannerBtn" class="ios-notice-close" title="Dismiss" style="color: #fef08a;">&times;</button>
+      </div>
+    </div>
+
+    <!-- One-tap initial start overlay (only shown if browser blocks autoplay/microphone before gesture) -->
+    <div id="gestureStartOverlay" class="gesture-start-overlay" style="display: none;">
+      <div class="gesture-card">
+        <div class="gesture-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="22" />
+            <line x1="8" y1="22" x2="16" y2="22" />
+          </svg>
+        </div>
+        <h2>Tap Screen to Start</h2>
+        <p>Automatic voice recognition will activate instantly and stay on continuously.</p>
+        <button id="gestureStartBtn" class="btn btn-primary-gradient btn-lg">Activate Live Captions</button>
+      </div>
+    </div>
+
+    <!-- Guide for Deaf People Modal -->
+    <div id="deafGuideModal" class="modal-overlay" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+            <h3>Guide for Deaf Individuals</h3>
+          </div>
+          <button id="closeDeafGuideBtn" class="action-btn-close" title="Close Guide">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <section class="guide-section highlight-box">
+            <div class="guide-section-header">
+              <span class="step-num">📱</span>
+              <h4>How to Use Sign Bridge with Hearing People</h4>
+            </div>
+            <p>This app enables you to hold your phone and instantly read everything a hearing person says in giant
+              text:
+            </p>
+            <div class="deaf-guide-steps">
+              <div class="deaf-step-item">
+                <div class="step-circle">1</div>
+                <div class="step-text">
+                  <strong>Hold Phone Facing You:</strong>
+                  <p>Hold the phone in your hand or place it on the table facing you. The hearing person speaks towards
+                    the phone.</p>
+                </div>
+              </div>
+              <div class="deaf-step-item">
+                <div class="step-circle">2</div>
+                <div class="step-text">
+                  <strong>Read in Real Time:</strong>
+                  <p>Spoken words stream onto the screen with a glowing accent as they speak, then lock into crisp,
+                    giant
+                    white text.</p>
+                </div>
+              </div>
+              <div class="deaf-step-item">
+                <div class="step-circle">3</div>
+                <div class="step-text">
+                  <strong>Mic ON / OFF Button:</strong>
+                  <p>Use the <strong>"Mic ON / OFF"</strong> button at the top whenever you want privacy or want to
+                    pause
+                    voice capture.</p>
+                </div>
+              </div>
+              <div class="deaf-step-item">
+                <div class="step-circle">4</div>
+                <div class="step-text">
+                  <strong>Clear Screen Anytime:</strong>
+                  <p>Tap <strong>"Clear Screen"</strong> when starting a new topic. All past sentences are automatically
+                    preserved in the <strong>"History"</strong> drawer!</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="guide-section">
+            <div class="guide-section-header">
+              <span class="step-num">🎙️</span>
+              <h4>External Microphone Option (for noisy places)</h4>
+            </div>
+            <p>You can plug an external microphone into your phone for 100% voice clarity even in loud cafes or
+              classrooms:</p>
+            <div class="mic-options-grid">
+              <div class="mic-option-card">
+                <div class="mic-opt-icon">🎙️</div>
+                <strong>Wireless Clip-on Mic</strong>
+                <p>Plug receiver into phone's charging port. Clip the small wireless mic to the hearing person's collar.
+                </p>
+              </div>
+              <div class="mic-option-card">
+                <div class="mic-opt-icon">🎧</div>
+                <strong>Bluetooth Earbud</strong>
+                <p>Pair Bluetooth earbud to phone. Speaker speaks into earbud or holds it near them.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="guide-section">
+            <div class="guide-section-header">
+              <span class="step-num">💡</span>
+              <h4>Helpful Visual Indicators</h4>
+            </div>
+            <ul class="clarity-tips-list">
+              <li><strong>Sound Detection Pulse:</strong> The border glows cyan the moment voice is detected, giving you
+                peripheral awareness.</li>
+              <li><strong>Clarity Signal:</strong> Green bars mean voice is clear. Yellow bars mean the speaker should
+                speak closer to the mic.</li>
+              <li><strong>Size &amp; Fullscreen:</strong> Tap "Fullscreen" to fill the entire phone screen without
+                browser
+                bars.</li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="modal-footer">
+          <button id="deafGuideGotItBtn" class="btn btn-primary-gradient btn-lg">Got It! Return to Screen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Language Selection Modal (All World Languages) -->
+    <div id="langModal" class="modal-overlay" style="display: none;">
+      <div class="modal-dialog lang-modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <h3>Select Spoken Language</h3>
+          </div>
+          <button id="closeLangModalBtn" class="action-btn-close" title="Close">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body lang-modal-body">
+          <div class="lang-search-wrap">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="lang-search-icon">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" id="langSearchInput" class="lang-search-input" placeholder="Search language (e.g. Filipino, English, Spanish, Japanese)...">
+          </div>
+
+          <div class="lang-section-title">⭐ Featured &amp; Recommended</div>
+          <div class="lang-grid" id="featuredLangGrid"></div>
+
+          <div class="lang-section-title" style="margin-top: 1rem;">🌐 All World Languages</div>
+          <div class="lang-grid" id="allLangGrid"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="closeLangModalBottomBtn" class="btn btn-primary-gradient btn-lg">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <!-- Header Navigation (Icon-Only Minimalist Top Bar) -->
+    <header class="app-header">
+      <div class="header-inner">
+        <!-- Top Left: Icon-Only Brand Logo (NO TEXT) -->
+        <div class="header-left">
+          <div class="brand-badge brand-logo-only" title="Sign Bridge - Click to Return Home">
+            <img src="images/logo.jpg" alt="Sign Bridge Logo" class="brand-logo-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="brand-icon" style="display:none;">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="22" />
+                <line x1="8" y1="22" x2="16" y2="22" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Right: Icon-Only Action Buttons (NO TEXT LABELS) -->
+        <div class="header-actions">
+          <!-- Mic ON / OFF Toggle Button (Icon Only - NO TEXT) -->
+          <button id="headerMicToggleBtn" class="btn btn-icon-only btn-mic-toggle is-active"
+            title="Microphone Active (Click to Mute)">
+            <div class="mic-toggle-dot"></div>
+            <svg id="headerMicIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          </button>
+
+          <!-- Language Button (Icon Only - Click to Choose Language - NO TEXT) -->
+          <button id="langToggleBtn" class="btn btn-icon-only" title="Click to Choose Language">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+          </button>
+          <select id="langSelector" style="display:none;" aria-label="Select language">
+            <option value="fil-PH" selected>Filipino (Tagalog)</option>
+            <option value="en-US">English (US)</option>
+          </select>
+
+          <!-- Font Size Button (Icon Only: Cycle Text Size - NO TEXT) -->
+          <button id="fontSizeCycleBtn" class="btn btn-icon-only" title="Click to Change Text Size">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 7 4 4 20 4 20 7" />
+              <line x1="9" y1="20" x2="15" y2="20" />
+              <line x1="12" y1="4" x2="12" y2="20" />
+            </svg>
+          </button>
+          <select id="fontSizeSelector" style="display:none;" aria-label="Select text size">
+            <option value="font-normal">Standard</option>
+            <option value="font-large" selected>Large</option>
+            <option value="font-xl">Extra Large</option>
+            <option value="font-giant">Giant</option>
+          </select>
+
+          <!-- Return to Front Page (Home - Icon Only - NO TEXT) -->
+          <button id="returnToFrontBtn" class="btn btn-icon-only" title="Return to Home Page">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline stroke-linecap="round" stroke-linejoin="round" points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </button>
+
+          <!-- Guide for Deaf People (Icon Only - NO TEXT) -->
+          <button id="deafGuideBtn" class="btn btn-icon-only" title="User Guide for Deaf Individuals">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </button>
+
+          <!-- History Drawer Toggle (Icon Only + Badge) -->
+          <button id="historyDrawerBtn" class="btn btn-icon-only" title="Conversation History">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="history-count-badge" id="historyCountBadge">0</span>
+          </button>
+
+          <!-- Fullscreen Mode (Icon Only - NO TEXT) -->
+          <button id="fullscreenToggleBtn" class="btn btn-primary-gradient btn-icon-only"
+            title="Toggle Fullscreen">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Application Stage: Maximized for Deaf Person's View -->
+    <main class="main-container">
+      <section class="billboard-section">
+        <div class="billboard-card" id="billboardCard">
+
+          <!-- Top Live Status & Quick Action Bar -->
+          <div class="billboard-topbar">
+            <div class="status-indicator-group">
+              <div class="status-indicator">
+                <span class="live-dot active" id="liveDot"></span>
+                <span class="status-text" id="liveStatusText">Listening automatically... Ready for speech</span>
+              </div>
+
+              <!-- Voice Clarity Signal Quality Meter -->
+              <div class="clarity-meter" id="clarityMeter" title="Real-Time Voice Volume &amp; Signal Quality">
+                <span class="clarity-title">Signal:</span>
+                <div class="clarity-bars" id="clarityBars">
+                  <span class="c-bar c-bar-1"></span>
+                  <span class="c-bar c-bar-2"></span>
+                  <span class="c-bar c-bar-3"></span>
+                  <span class="c-bar c-bar-4"></span>
+                </div>
+                <span class="clarity-label" id="clarityLabel">Ready</span>
+              </div>
+            </div>
+
+            <div class="billboard-actions">
+              <!-- Clear Screen Button -->
+              <button id="clearCurrentBtn" class="action-btn" title="Clear screen for next conversation">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span>Clear Screen</span>
+              </button>
+
+              <!-- Copy Captions Button -->
+              <button id="copyTranscriptBtn" class="action-btn" title="Copy text to clipboard">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- The Giant Visual Closed Caption Display Area -->
+          <div class="caption-display-area font-large" id="liveTextContainer" role="region" aria-live="polite">
+            <!-- Placeholder state -->
+            <div class="caption-placeholder" id="liveTextPlaceholder">
+              <div class="placeholder-icon-wrap pulse-glow">
+                <svg viewBox="0 0 24 24" width="54" height="54" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z" />
+                </svg>
+              </div>
+              <h2 class="placeholder-title">Let's Communicate</h2>
+              <p class="placeholder-desc">Talk to me</p>
+              <div class="placeholder-tip">
+                <span class="tip-dot"></span> Studio noise suppression &bull; Use Mic ON/OFF button at top anytime
+              </div>
+            </div>
+
+            <!-- Active Caption Stream -->
+            <div class="transcript-stream" id="transcriptStream" style="display: none;">
+              <p class="stream-final" id="finalTranscriptText"></p>
+              <span class="stream-interim" id="interimTranscriptText"></span>
+            </div>
+          </div>
+
+          <!-- Live Visual Voice Frequency Wave & Always-On Monitor -->
+          <div class="monitor-footer">
+            <div class="visualizer-bar">
+              <canvas id="audioVisualizer" width="800" height="44" aria-label="Live Voice Frequency Waves"></canvas>
+            </div>
+            <div class="monitor-info-row">
+              <div class="monitor-status-pill">
+                <span class="radar-dot"></span>
+                <span id="monitorStatusLabel">Voice Detection: Active &bull; Ready</span>
+              </div>
+              <div class="monitor-help-hint">
+                Hold phone facing you &bull; Captions appear automatically
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Slide-Out Conversation History Drawer -->
+      <aside class="history-drawer" id="historyDrawer">
+        <div class="drawer-header">
+          <div class="drawer-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3>Conversation History</h3>
+          </div>
+          <div class="drawer-actions">
+            <button id="exportLogBtn" class="action-btn" title="Download text transcript">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Save</span>
+            </button>
+            <button id="clearHistoryBtn" class="action-btn" title="Clear conversation log">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Clear</span>
+            </button>
+            <button id="closeDrawerBtn" class="action-btn-close" title="Close drawer">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="drawer-body" id="chatLogContainer">
+          <div class="empty-history" id="emptyChatState">
+            <div class="empty-icon">💬</div>
+            <p class="empty-lead">No speech recorded yet</p>
+            <p class="empty-sub">Spoken sentences from the hearing person will be logged here with timestamps for
+              review.
+            </p>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+
+
+    <!-- Fullscreen Big Screen Presentation Mode Overlay -->
+    <div id="presentationOverlay" class="presentation-overlay" style="display: none;">
+      <div class="pres-top-bar">
+        <div class="pres-brand">
+          <span class="pres-live-dot"></span>
+          <span class="pres-title">Sign Bridge &bull; Live Fullscreen Captions</span>
+        </div>
+        <div class="pres-controls">
+          <button id="presClearBtn" class="btn btn-secondary btn-sm" title="Clear fullscreen captions">Clear
+            Screen</button>
+          <button id="exitPresentationBtn" class="btn btn-primary-gradient btn-sm">Exit Fullscreen (Esc)</button>
+        </div>
+      </div>
+
+      <div class="pres-content-area">
+        <div class="pres-text-wrapper" id="presTextStream">
+          <span id="presFinalText" class="pres-final">Listening... Spoken voice will appear here automatically.</span>
+          <span id="presInterimText" class="pres-interim"></span>
+        </div>
+      </div>
+
+      <div class="pres-bottom-bar">
+        <div class="pres-status-pill">
+          <span class="radar-dot"></span>
+          <span>Always Listening Automatically</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastNotification" class="toast-notification" aria-live="polite"></div>
+
+  </div><!-- end #liveAppView -->
+
+  <script src="app.js"></script>
+</body>
+
+</html>
